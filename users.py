@@ -1,6 +1,7 @@
 import encrypt
 
 
+
 class UserList:
 
     def __init__(self):
@@ -29,12 +30,14 @@ class UserList:
             f.writelines(uid + ' ' + psd + '\n')
         f.close()
 
-    def change_password(self, uid, psd):
+    def     is_exists(self, uid):
         t = self.user_list.get(uid)
-        if t is not None:
-            self.user_list[uid] = encrypt.encrypt(uid, psd)
-        else:
+        if t is None:
             raise Exception("没有这个用户")
+
+    def change_password(self, uid, psd):
+        self.is_exists(uid)
+        self.user_list[uid] = encrypt.encrypt(uid, psd)
 
     def add_user(self, uid, psd):
         t = self.user_list.get(uid)
@@ -50,11 +53,8 @@ class UserList:
         del self.user_list[uid]
 
     def get_password(self, uid):
-        t = self.user_list.get(uid)
-        if t is not None:
-            return encrypt.decrypt(uid, self.user_list[uid])
-        else:
-            raise Exception("没有这个用户")
+        self.is_exists(uid)
+        return encrypt.decrypt(uid, self.user_list[uid])
 
     def set_default(self, uid):
         self.default = uid
@@ -64,3 +64,8 @@ class UserList:
 
     def get_current_password(self):
         return self.get_password(self.current)
+
+    def show(self):
+        for x in self.user_list:
+            print(x)
+
